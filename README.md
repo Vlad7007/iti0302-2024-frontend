@@ -1,6 +1,11 @@
 # iti0302-2024-frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the frontend for the Inventory Juggler website. Project for the Web Application Development course (ITI0302) at TalTech.
+
+## Prerequisites/requirements
+
+- Node.js
+- npm
 
 ## Recommended IDE Setup
 
@@ -32,8 +37,57 @@ npm run dev
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Build and Run Docker Containers
 
-```sh
-npm run lint
-```
+To build and run the Docker containers for this project, follow these steps:
+
+1. **Build the Docker Image:**
+
+   Ensure you have Docker installed on your system. Navigate to the root directory of the project and run the following command to build the Docker image:
+
+   ```sh
+   docker build -t inventory-juggler .
+   ```
+
+   This command will create a Docker image named `inventory-juggler` using the Dockerfile located in the root directory.
+
+2. **Run the Docker Container:**
+
+   Once the image is built, you can run it using the following command:
+
+   ```sh
+   docker run -p 8080:80 inventory-juggler
+   ```
+
+   This command will start a new container from the `inventory-juggler` image and map port 8080 on your host to port 80 in the container. You can access the application by navigating to `http://localhost:8080` in your web browser.
+
+3. **Stop the Docker Container:**
+
+   To stop the running container, first identify the container ID using:
+
+   ```sh
+   docker ps
+   ```
+
+   Then stop the container with:
+
+   ```sh
+   docker stop <container_id>
+   ```
+
+Replace `<container_id>` with the actual ID of the running container.
+
+These steps will help you build and run the Docker containers for the Inventory Juggler project.
+
+### Technology used
+
+The following technologies are used in this project:
+
+- Vue 3
+- Vite
+- Bootstrap 5
+- Pinia
+- Vue Router
+- Axios
+- Docker
+- Nginx
