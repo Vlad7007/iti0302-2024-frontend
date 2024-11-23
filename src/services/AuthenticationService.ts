@@ -6,7 +6,7 @@ export default class AuthenticationService extends BaseService<IUserInfo> {
   private static instance: AuthenticationService;
 
   private constructor() {
-    super('/');
+    super('/auth/');
   }
 
   public static getInstance(): AuthenticationService {
@@ -22,7 +22,7 @@ export default class AuthenticationService extends BaseService<IUserInfo> {
         method: 'POST',
         url: 'login',
         data: { username, password }
-      }, {} as IUserInfo);
+      }, {} as IUserInfo, true);
 
       if (response.data) {
         const userInfo = this.handleTokenResponse(response.data);
