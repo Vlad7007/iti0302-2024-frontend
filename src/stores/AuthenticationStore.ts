@@ -20,6 +20,18 @@ export const useAuthenticationStore = defineStore({
       this.isAuthenticated = false;
       this.setUserInfo(null);
       localStorage.removeItem('authToken');
+    },
+    initializeAuth() {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        this.login({
+          token,
+          sub: decodedToken.sub,
+          role: decodedToken.role,
+          userId: decodedToken.userId
+        });
+      }
     }
   }
 });

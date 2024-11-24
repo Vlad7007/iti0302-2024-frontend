@@ -7,16 +7,18 @@ export default class BaseService<T> {
   protected httpClient: AxiosInstance;
 
   constructor(baseURL: string) {
-    baseURL = 'http://localhost:8080/api/auth' + baseURL;
+    baseURL = '/api' + baseURL;
     this.httpClient = axios.create({ baseURL });
   }
 
-  protected async request(config: AxiosRequestConfig, userInfo: IUserInfo): Promise<IResultObject<T>> {
+  protected async request(config: AxiosRequestConfig, userInfo: IUserInfo, skipToken = false): Promise<IResultObject<T>> {
     try {
       const headers = { ...config.headers } as { [key: string]: string };
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+      if (!skipToken) {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
       }
 
       const response = await this.httpClient.request<T>({
@@ -27,9 +29,9 @@ export default class BaseService<T> {
     } catch (error: any) {
 
       console.error('Request failed:', {
-        // message: error.message,
-        // status: error.response?.status,
-        // url: config.url,
+        message: error.message,
+        status: error.response?.status,
+        url: config.url,
         data: error.response?.data
       });
 

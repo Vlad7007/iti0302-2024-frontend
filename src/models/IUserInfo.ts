@@ -3,4 +3,5 @@ export interface IUserInfo {
   sub: string; // username
   role: string;
   userId: number;
+  content?: any;
 }

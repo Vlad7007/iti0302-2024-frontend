@@ -1,15 +1,12 @@
 import type { IResultObject } from '@/models/IResultObject';
 import type { IUserInfo } from '@/models/IUserInfo';
-import axios from 'axios';
 import BaseService from '@/services/BaseService'
-
 
 export default class RegisterService extends BaseService<IUserInfo> {
   private static instance: RegisterService;
-  private readonly baseUrl = 'http://localhost:8080/api/auth/';
 
   private constructor() {
-    super('/');
+    super('/auth/');
   }
 
   public static getInstance(): RegisterService {
@@ -25,7 +22,7 @@ export default class RegisterService extends BaseService<IUserInfo> {
         method: 'POST',
         url: 'register',
         data: { username, email, password }
-      }, {} as IUserInfo);
+      }, {} as IUserInfo, true);
 
       if (response.data) {
         const userInfo = this.handleTokenResponse(response.data);

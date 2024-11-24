@@ -8,6 +8,7 @@ const router = useRouter()
 const authenticationStore = useAuthenticationStore()
 
 const userInfo = computed((): IUserInfo => {
+  console.log(authenticationStore.isAuthenticated)
   return authenticationStore.userInfo ?? { token:'', sub: '', role: '', userId: 0}
 })
 

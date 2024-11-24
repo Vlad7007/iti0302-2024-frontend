@@ -4,7 +4,7 @@
 <template>
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Taltech
+            &copy; 2024 - Inventory Juggler Org.
         </div>
     </footer>
 </template>
