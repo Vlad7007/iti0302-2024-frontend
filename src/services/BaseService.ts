@@ -7,7 +7,7 @@ export default class BaseService<T> {
   protected httpClient: AxiosInstance;
 
   constructor(baseURL: string) {
-    baseURL = 'http://localhost:8080/api' + baseURL;
+    baseURL = '/api' + baseURL;
     this.httpClient = axios.create({ baseURL });
   }
 

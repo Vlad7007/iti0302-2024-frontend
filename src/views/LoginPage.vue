@@ -11,14 +11,17 @@ const validationError = ref("");
 const authenticationStore = useAuthenticationStore();
 
 async function validateAndLogin() {
-
-  const response = await AuthenticationService.getInstance().login(username.value, pwd.value)
-  if (response.data) {
-    authenticationStore.login(response.data);
-    await router.push("/");
-  }
-  if (response.errors && response.errors.length > 0) {
-    validationError.value = response.errors.join('\n');
+  try {
+    const response = await AuthenticationService.getInstance().login(username.value, pwd.value);
+    if (response.data) {
+      authenticationStore.login(response.data);
+      await router.push("/");
+    } else if (response.errors && response.errors.length > 0) {
+      validationError.value = response.errors.join('\n');
+    }
+  } catch (error: any) {
+    console.error('An error occurred during login:', error);
+    validationError.value = 'An unexpected error occurred. Please try again later.';
   }
 }
 
@@ -29,7 +32,7 @@ async function validateAndLogin() {
     <div class="col-md-5">
       <h2>Log in</h2>
       <hr />
-      <div class="text-danger" role="alert" style="white-space: pre-line">{{validationError}}</div>
+      <div v-if="validationError"  class="alert alert-danger" style="white-space: pre-line">{{validationError}}</div>
       <div class="form-floating mb-3">
         <input
           v-model="username"

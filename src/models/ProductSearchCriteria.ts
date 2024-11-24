@@ -4,6 +4,8 @@ export interface ProductSearchCriteria {
   maxPrice?: number;
   page?: number;
   size?: number;
+  totalElements?: number;
+  totalPages?: number;
   sortBy?: string;
   sortDirection?: string;
 }

@@ -3,6 +3,7 @@ import BaseService from '@/services/BaseService';
 import type { IResultObject } from '@/models/IResultObject';
 import type { IProduct } from '@/models/IProduct';
 import type { IUserInfo } from '@/models/IUserInfo';
+import type { IPaginatedResponseData } from '@/models/IPaginatedResponseData'
 
 export default class ProductsService extends BaseService<IProduct> {
   private static instance: ProductsService;
@@ -18,25 +19,35 @@ export default class ProductsService extends BaseService<IProduct> {
     return this.instance;
   }
 
-  public async getAll(criteria: any, userInfo: IUserInfo): Promise<IResultObject<IProduct[]>> {
-    const response = await this.request({
-      method: 'GET',
-      url: '',
-      params: {
-        ...criteria,
-        price: `${criteria.minPrice},${criteria.maxPrice}`,
-        sort: `${criteria.sortBy},${criteria.sortDirection}`,
-        search: criteria.name,
-        page: criteria.page,
-        size: criteria.size
+  public async getAll(criteria: any, userInfo: IUserInfo): Promise<IPaginatedResponseData<IProduct[]>> {
+    try {
+      const response: IResultObject<any> = await this.request({
+        method: 'GET',
+        url: '',
+        params: criteria,
+      }, userInfo);
+
+      if (response.data) {
+        return this.createPaginatedResponse(response.data, response.errors);
+      } else {
+        return this.createPaginatedResponse({}, response.errors);
       }
-    }, userInfo);
-    console.log('Response:', response);
-    if ((response.data as any).content) {
-      return { data: (response.data as any).content };
-    } else {
-      return { errors: response.errors };
+    } catch (error: any) {
+      console.log("Error caught in ProductService: ", error);
+      return this.createPaginatedResponse({}, error.errors);
     }
+  }
+
+
+  private createPaginatedResponse(responseData: any, errors?: string[]): IPaginatedResponseData<IProduct[]> {
+    return {
+      content: responseData.content,
+      number: responseData.number,
+      size: responseData.size,
+      totalElements: responseData.totalElements,
+      totalPages: responseData.totalPages,
+      errors: errors
+    };
   }
 
   public async getById(id: number, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {

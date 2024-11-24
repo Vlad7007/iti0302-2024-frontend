@@ -4,7 +4,6 @@ import BaseService from '@/services/BaseService'
 
 export default class RegisterService extends BaseService<IUserInfo> {
   private static instance: RegisterService;
-  private readonly baseUrl = 'http://localhost:8080/api/auth/';
 
   private constructor() {
     super('/auth/');

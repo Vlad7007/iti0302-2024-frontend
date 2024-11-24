@@ -29,17 +29,17 @@ async function validateAndRegister() {
     <div class="col-md-5">
       <h2>Register</h2>
       <hr />
-      <div class="text-danger" role="alert" style="white-space: pre-line">{{validationError}}</div>
+      <div v-if="validationError" class="alert alert-danger" style="white-space: pre-line">{{validationError}}</div>
       <div class="form-floating mb-3">
         <input
           v-model="username"
-          id="firstName"
+          id="userName"
           type="text"
           class="form-control"
           autoComplete="firstName"
-          placeholder="First Name"
+          placeholder="User Name"
         />
-        <label htmlFor="firstName" class="form-label">Firstname</label>
+        <label htmlFor="username" class="form-label">Username</label>
       </div>
       <div class="form-floating mb-3">
         <input
