@@ -50,7 +50,7 @@ deploy:
     - chmod 700 ~/.ssh
   script:
     - ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP "
-      cd /opt/iti0302/backend &&
+      cd /opt/inventory-juggler &&
       docker-compose pull &&
       docker-compose down &&
       docker-compose up -d"
