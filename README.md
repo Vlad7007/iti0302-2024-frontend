@@ -43,41 +43,48 @@ To build and run the Docker containers for this project, follow these steps:
 
 1. **Build the Docker Image:**
 
-   Ensure you have Docker installed on your system. Navigate to the root directory of the project and run the following command to build the Docker image:
+   Ensure you have Docker installed and running on your system. Navigate to the root directory of the project and run the following command to build the Docker image:
 
    ```sh
-   docker build -t inventory-juggler .
+   docker build -t your/docker-repository:frontend-latest .
    ```
 
-   This command will create a Docker image named `inventory-juggler` using the Dockerfile located in the root directory.
+   This command will create a Docker image using the Dockerfile located in the root directory.
+   After that don't forget to push the image to dockerhub.
 
+   ```sh
+   docker push your/docker-repository:frontend-latest
+   ```
 2. **Run the Docker Container:**
 
-   Once the image is built, you can run it using the following command:
+   Make sure that you have a properly configured `docker-compose.yaml` file.
+   It could look something like this:
 
-   ```sh
-   docker run -p 8080:80 inventory-juggler
+   ```yaml
+   services:
+      frontend:
+         image: your/docker-repository:frontend-latest
+         container_name: your-frontend-name
+         ports:
+            - "3000:80"
+         restart: unless-stopped
    ```
 
-   This command will start a new container from the `inventory-juggler` image and map port 8080 on your host to port 80 in the container. You can access the application by navigating to `http://localhost:8080` in your web browser.
+   After that, you can run the container using the following command:
 
+   ```sh
+   docker compose up
+   ```
+
+   This command will start the Docker container with the frontend.
+   To look at it go, you can visit `http://localhost:3000` in your browser.
 3. **Stop the Docker Container:**
 
-   To stop the running container, first identify the container ID using:
-
+   To stop the running container, you can use the following command:
+   
    ```sh
-   docker ps
+   docker compose down
    ```
-
-   Then stop the container with:
-
-   ```sh
-   docker stop <container_id>
-   ```
-
-Replace `<container_id>` with the actual ID of the running container.
-
-These steps will help you build and run the Docker containers for the Inventory Juggler project.
 
 ### Technology used
 

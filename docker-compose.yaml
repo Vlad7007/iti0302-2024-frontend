@@ -1,7 +1,7 @@
 services:
   frontend:
-    image: vnikif/iti0302-2024-frontend:latest
-    container_name: iti0302-2024-frontend
+    image: vnikif/inventory-juggler:frontend-latest
+    container_name: inventory-juggler
     ports:
       - "3000:80"
     restart: unless-stopped
