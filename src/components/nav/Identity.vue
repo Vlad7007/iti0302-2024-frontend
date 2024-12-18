@@ -3,19 +3,27 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { IUserInfo } from '@/models/IUserInfo'
 import { useAuthenticationStore } from '@/stores/AuthenticationStore'
+import AuthenticationService from '@/services/AuthenticationService'
 
 const router = useRouter()
 const authenticationStore = useAuthenticationStore()
+const authenticationService = AuthenticationService.getInstance()
 
 const userInfo = computed((): IUserInfo => {
   console.log(authenticationStore.isAuthenticated)
   return authenticationStore.userInfo ?? { token:'', sub: '', role: '', userId: 0}
 })
 
-const doLogout = () => {
-  authenticationStore.logout()
-  router.push('/')
-}
+const doLogout = async () => {
+  try {
+    await authenticationService.logout();
+    authenticationStore.logout();
+    await router.push('/');
+  } catch (error: any) {
+    console.error(error);
+  }
+};
+
 </script>
 
 <style scoped></style>

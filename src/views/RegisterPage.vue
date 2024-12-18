@@ -23,38 +23,12 @@ async function validateAndRegister() {
   }
 }
 
-function handleRegister(email: string,
-                        password: string,
-                        firstName: string,
-                        lastName: string,
-                        dateOfBirth: string,
-                        phoneNumber: string) {
-  axios.post<void>('/api/auth/register', {
-    email: email,
-    password: password,
-    firstName: firstName,
-    lastName: lastName,
-    dateOfBirth: dateOfBirth,
-    phoneNumber: phoneNumber
-  }).then(r => {
-    console.log(r)
-  }).catch(e => {
-    console.error(e)
-  })
-}
-
 
 </script>
 
 <template>
   <div class="row">
     <div class="col-md-5">
-      <div>
-        <button @click="handleRegister('as2@as2', 'asss2', 'AF2', 'AL2', '2024-11-14', '+37287654320')">
-          Register
-        </button>
-
-      </div>
       <h2>Register</h2>
       <hr />
       <div v-if="validationError" class="alert alert-danger" style="white-space: pre-line">{{validationError}}</div>
