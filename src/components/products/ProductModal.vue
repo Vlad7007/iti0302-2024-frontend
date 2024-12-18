@@ -21,7 +21,6 @@ function saveProduct() {
         </div>
         <button class="close" @click="closeModal">X</button>
         <slot name="body">
-          <!-- Default content if no slot is provided -->
           <div>
             <p>Product details go here...</p>
             <button @click="saveProduct">Save</button>
