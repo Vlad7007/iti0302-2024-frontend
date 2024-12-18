@@ -10,10 +10,10 @@ export default class AuthenticationService extends BaseService<IUserInfo> {
   }
 
   public static getInstance(): AuthenticationService {
-    if (!this.instance) {
-      this.instance = new AuthenticationService();
+    if (!AuthenticationService.instance) {
+      AuthenticationService.instance = new AuthenticationService();
     }
-    return this.instance;
+    return AuthenticationService.instance;
   }
 
   public async login(username: string, password: string): Promise<IResultObject<IUserInfo>> {
@@ -30,6 +30,19 @@ export default class AuthenticationService extends BaseService<IUserInfo> {
       }
 
       return response;
+    } catch (error: any) {
+      return { errors: error.errors };
+    }
+  }
+
+  public async logout(): Promise<IResultObject<IUserInfo>> {
+    try {
+      await this.request({
+        method: 'POST',
+        url: 'logout',
+      }, {} as IUserInfo, false);
+
+      return { data: null };
     } catch (error: any) {
       return { errors: error.errors };
     }

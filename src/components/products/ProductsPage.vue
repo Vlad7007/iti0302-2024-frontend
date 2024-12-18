@@ -15,6 +15,7 @@ const categoryIdsInput = ref('');
 const isLoading = ref(true);
 const showError = ref<string>('');
 const authenticationStore = useAuthenticationStore();
+const hasManagerOrAdminRole = authenticationStore.userInfo?.role === 'ROLE_MANAGER' || authenticationStore.userInfo?.role === 'ROLE_ADMIN';
 const name = ref('');
 const page = ref(1);
 const totalPages = ref(0);
@@ -167,7 +168,7 @@ onMounted(() => {
           <button class="btn btn-primary" @click="saveProduct(selectedProduct)">Save</button>
         </template>
       </ProductModal>
-      <button @click="openCreateModal" class="btn btn-success mb-2">Add Product</button>
+      <button @click="openCreateModal" class="btn btn-success mb-2" v-if="hasManagerOrAdminRole">Add Product</button>
 
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="input-group">
@@ -199,7 +200,7 @@ onMounted(() => {
           </th>
           <th>Categories</th>
           <th>Supplier</th>
-          <th>Actions</th>
+          <th v-if="hasManagerOrAdminRole">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -209,9 +210,11 @@ onMounted(() => {
           <td>{{ product.quantity }}</td>
           <td>{{ product.categoryIds.join(', ') }}</td>
           <td>{{ product.supplierId }}</td>
-          <td>
-            <button @click="openEditModal(product)" class="btn btn-warning btn-sm">Edit</button>
-            <button @click="deleteProduct(product.id!)" class="btn btn-danger btn-sm">Delete</button>
+          <td v-if="hasManagerOrAdminRole">
+            <div class="d-flex gap-2">
+              <button @click="openEditModal(product)" class="btn btn-warning btn-sm">Edit</button>
+              <button @click="deleteProduct(product.id!)" class="btn btn-danger btn-sm">Delete</button>
+            </div>
           </td>
         </tr>
         </tbody>

@@ -9,10 +9,11 @@ const username = ref("adminGod")
 const pwd = ref("12345678");
 const validationError = ref("");
 const authenticationStore = useAuthenticationStore();
+const authenticationService = AuthenticationService.getInstance()
 
 async function validateAndLogin() {
   try {
-    const response = await AuthenticationService.getInstance().login(username.value, pwd.value);
+    const response = await authenticationService.login(username.value, pwd.value);
     if (response.data) {
       authenticationStore.login(response.data);
       await router.push("/");
