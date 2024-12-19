@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import type { IUserInfo } from '@/models/IUserInfo'
 import { useAuthenticationStore } from '@/stores/AuthenticationStore'
 import AuthenticationService from '@/services/AuthenticationService'
 
 const router = useRouter()
 const authenticationStore = useAuthenticationStore()
 const authenticationService = AuthenticationService.getInstance()
-
-const userInfo = computed((): IUserInfo => {
-  console.log(authenticationStore.isAuthenticated)
-  return authenticationStore.userInfo ?? { token:'', sub: '', role: '', userId: 0}
-})
 
 const doLogout = async () => {
   try {
