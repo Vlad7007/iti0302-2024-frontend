@@ -22,7 +22,7 @@ export default class AuthenticationService extends BaseService<IUserInfo> {
         method: 'POST',
         url: 'login',
         data: { username, password }
-      }, {} as IUserInfo, true);
+      },true);
 
       if (response.data) {
         const userInfo = this.handleTokenResponse(response.data);
@@ -40,7 +40,7 @@ export default class AuthenticationService extends BaseService<IUserInfo> {
       await this.request({
         method: 'POST',
         url: 'logout',
-      }, {} as IUserInfo, false);
+      }, false);
 
       return { data: null };
     } catch (error: any) {

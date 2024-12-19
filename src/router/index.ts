@@ -5,6 +5,8 @@ import RegisterPage from '@/views/RegisterPage.vue'
 import ProductsPage from '@/components/products/ProductsPage.vue'
 import CategoriesPage from '@/components/categories/CategoriesPage.vue'
 import SuppliersPage from '@/components/suppliers/SuppliersPage.vue'
+import AdminPage from '@/components/admin/AdminPage.vue'
+import { useAuthenticationStore } from '@/stores/AuthenticationStore'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -36,6 +38,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/suppliers',
     name: 'suppliers',
     component: SuppliersPage
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: AdminPage,
+    meta: { requiresAdmin: true }
   }
 ]
 
@@ -43,5 +51,21 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthenticationStore();
+  const isAuthenticated = authStore.isAuthenticated;
+  const isAdmin = authStore.userInfo?.role === 'ROLE_ADMIN';
+
+  if (to.matched.some(record => record.meta.requiresAdmin)) {
+    if (!isAuthenticated || !isAdmin) {
+      next({ name: 'home' });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 export default router

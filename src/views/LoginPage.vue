@@ -21,8 +21,13 @@ async function validateAndLogin() {
       validationError.value = response.errors.join('\n');
     }
   } catch (error: any) {
+    const errorMessage = error.message;
+    if (errorMessage.includes('<html>')) {
+      validationError.value = 'Failed to connect to the server. Please try again later.';
+    } else {
+      validationError.value = 'An unexpected error occurred. Please try again later.';
+    }
     console.error('An error occurred during login:', error);
-    validationError.value = 'An unexpected error occurred. Please try again later.';
   }
 }
 

@@ -22,7 +22,7 @@ export default class RegisterService extends BaseService<IUserInfo> {
         method: 'POST',
         url: 'register',
         data: { username, email, password }
-      }, {} as IUserInfo, true);
+      },true);
 
       if (response.data) {
         const userInfo = this.handleTokenResponse(response.data);

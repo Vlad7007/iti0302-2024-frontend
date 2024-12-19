@@ -11,7 +11,7 @@ export default class BaseService<T> {
     this.httpClient = axios.create({ baseURL });
   }
 
-  protected async request(config: AxiosRequestConfig, userInfo: IUserInfo, skipToken = false): Promise<IResultObject<T>> {
+  protected async request(config: AxiosRequestConfig, skipToken = false): Promise<IResultObject<T>> {
     try {
       const headers = { ...config.headers } as { [key: string]: string };
       if (!skipToken) {

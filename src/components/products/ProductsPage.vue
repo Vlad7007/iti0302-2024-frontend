@@ -49,18 +49,27 @@ const loadProducts = async () => {
 };
 
 
+const modalError = ref<string>('');
+
 const saveProduct = async (product: IProduct) => {
   try {
     selectedProduct.value.categoryIds = categoryIdsInput.value.split(',').map(id => parseInt(id.trim(), 10));
+    let response;
     if (selectedProduct.value.id) {
-      await ProductsService.getInstance().update(selectedProduct.value.id, selectedProduct.value, authenticationStore.userInfo!);
+      response = await ProductsService.getInstance().update(selectedProduct.value.id, selectedProduct.value, authenticationStore.userInfo!);
     } else {
-      await ProductsService.getInstance().create(selectedProduct.value, authenticationStore.userInfo!);
+      response = await ProductsService.getInstance().create(selectedProduct.value, authenticationStore.userInfo!);
     }
-    await loadProducts();
-    closeModal();
-  } catch (error) {
-    console.error('Error saving product:', error);
+
+    if (response.errors) {
+      modalError.value = response.errors.join('\n');
+    } else {
+      await loadProducts();
+      modalError.value = '';
+      closeModal();
+    }
+  } catch (error: any) {
+    modalError.value = 'An unexpected error occurred while saving the product';
   }
 };
 
@@ -144,6 +153,7 @@ onMounted(() => {
           <h2>{{ selectedProduct.id ? 'Edit' : 'Add' }} Product</h2>
         </template>
         <template #body>
+          <div v-if="modalError" class="alert alert-danger" style="white-space: pre-line">{{ modalError }}</div>
           <div class="form-group">
             <label for="productName">Name</label>
             <input v-model="selectedProduct.name" type="text" class="form-control" id="productName" placeholder="Enter product name" />
@@ -224,8 +234,10 @@ onMounted(() => {
         <div>
           <span>Page {{ page }} of {{ totalPages }}</span>
         </div>
-        <button @click="prevPage" :disabled="page === 1" class="btn btn-outline-secondary">Previous</button>
-        <button @click="nextPage" :disabled="page >= totalPages" class="btn btn-outline-secondary">Next</button>
+        <div class="d-flex gap-2">
+          <button @click="prevPage" :disabled="page === 1" class="btn btn-outline-secondary">Previous</button>
+          <button @click="nextPage" :disabled="page >= totalPages" class="btn btn-outline-secondary">Next</button>
+        </div>
       </div>
     </div>
   </div>

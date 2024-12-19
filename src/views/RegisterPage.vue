@@ -13,13 +13,22 @@ const validationError = ref('')
 const authenticationStore = useAuthenticationStore()
 
 async function validateAndRegister() {
-  const response = await RegisterService.getInstance().register(username.value, email.value, password.value);
-  if (response.data) {
-    authenticationStore.login(response.data);
-    await router.push("/");
-  }
-  if (response.errors && response.errors.length > 0) {
-    validationError.value = response.errors.join('\n');
+  try {
+    const response = await RegisterService.getInstance().register(username.value, email.value, password.value);
+    if (response.data) {
+      authenticationStore.login(response.data);
+      await router.push("/");
+    } else if (response.errors && response.errors.length > 0) {
+      validationError.value = response.errors.join('\n');
+    }
+  } catch (error: any) {
+    const errorMessage = error.message;
+    if (errorMessage.includes('<html>')) {
+      validationError.value = 'Failed to connect to the server. Please try again later.';
+    } else {
+      validationError.value = 'An unexpected error occurred. Please try again later.';
+    }
+    console.error('An error occurred during registration:', error);
   }
 }
 

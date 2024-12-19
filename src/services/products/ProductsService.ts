@@ -25,7 +25,7 @@ export default class ProductsService extends BaseService<IProduct> {
         method: 'GET',
         url: '',
         params: criteria,
-      }, userInfo);
+      });
 
       if (response.data) {
         return this.createPaginatedResponse(response.data, response.errors);
@@ -54,7 +54,7 @@ export default class ProductsService extends BaseService<IProduct> {
     return this.request({
       method: 'GET',
       url: `/${id}`
-    }, userInfo);
+    });
   }
 
   public async create(product: IProduct, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
@@ -62,7 +62,7 @@ export default class ProductsService extends BaseService<IProduct> {
       method: 'POST',
       url: '',
       data: product
-    }, userInfo);
+    });
   }
 
   public async update(id: number, product: IProduct, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
@@ -70,13 +70,13 @@ export default class ProductsService extends BaseService<IProduct> {
       method: 'PUT',
       url: `/${id}`,
       data: product
-    }, userInfo);
+    });
   }
 
   public async delete(id: number, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
     return this.request({
       method: 'DELETE',
       url: `/${id}`
-    }, userInfo);
+    });
   }
 }
