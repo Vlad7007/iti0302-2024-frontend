@@ -7,7 +7,7 @@ function closeModal() {
   emit('close');
 }
 
-function saveProduct() {
+function saveButton() {
   emit('save');
 }
 </script>
@@ -17,13 +17,13 @@ function saveProduct() {
     <div class="modal" @click="closeModal">
       <div class="modal-content" @click.stop>
         <div class="title">
-          <slot name="title">Product Form</slot>
+          <slot name="title">Form</slot>
         </div>
         <button class="close" @click="closeModal">X</button>
         <slot name="body">
           <div>
-            <p>Product details go here...</p>
-            <button @click="saveProduct">Save</button>
+            <p>Details go here...</p>
+            <button @click="saveButton">Save</button>
           </div>
         </slot>
       </div>

@@ -2,7 +2,6 @@
 import BaseService from '@/services/BaseService';
 import type { IResultObject } from '@/models/IResultObject';
 import type { IProduct } from '@/models/IProduct';
-import type { IUserInfo } from '@/models/IUserInfo';
 import type { IPaginatedResponseData } from '@/models/IPaginatedResponseData'
 
 export default class ProductsService extends BaseService<IProduct> {
@@ -19,7 +18,7 @@ export default class ProductsService extends BaseService<IProduct> {
     return this.instance;
   }
 
-  public async getAll(criteria: any, userInfo: IUserInfo): Promise<IPaginatedResponseData<IProduct[]>> {
+  public async getAll(criteria: any): Promise<IPaginatedResponseData<IProduct[]>> {
     try {
       const response: IResultObject<any> = await this.request({
         method: 'GET',
@@ -50,14 +49,14 @@ export default class ProductsService extends BaseService<IProduct> {
     };
   }
 
-  public async getById(id: number, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
+  public async getById(id: number): Promise<IResultObject<IProduct>> {
     return this.request({
       method: 'GET',
       url: `/${id}`
     });
   }
 
-  public async create(product: IProduct, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
+  public async create(product: IProduct): Promise<IResultObject<IProduct>> {
     return this.request({
       method: 'POST',
       url: '',
@@ -65,7 +64,7 @@ export default class ProductsService extends BaseService<IProduct> {
     });
   }
 
-  public async update(id: number, product: IProduct, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
+  public async update(id: number, product: IProduct): Promise<IResultObject<IProduct>> {
     return this.request({
       method: 'PUT',
       url: `/${id}`,
@@ -73,7 +72,7 @@ export default class ProductsService extends BaseService<IProduct> {
     });
   }
 
-  public async delete(id: number, userInfo: IUserInfo): Promise<IResultObject<IProduct>> {
+  public async delete(id: number): Promise<IResultObject<IProduct>> {
     return this.request({
       method: 'DELETE',
       url: `/${id}`

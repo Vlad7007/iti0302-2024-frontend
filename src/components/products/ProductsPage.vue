@@ -4,13 +4,16 @@ import ProductsService from '@/services/products/ProductsService';
 import type { IProduct } from '@/models/IProduct';
 import { useAuthenticationStore } from '@/stores/AuthenticationStore';
 import type { ProductSearchCriteria } from '@/models/ProductSearchCriteria';
-import ProductModal from '@/components/products/ProductModal.vue'
+import GeneralModal from '@/components/GeneralModal.vue'
+import CategoryService from '@/services/categories/CategoryService'
+import SuppliersService from '@/services/suppliers/SuppliersService'
 
 const products = ref<IProduct[]>([]);
+const categoriesMap = ref<{ [key: number]: string }>({});
+const suppliersMap = ref<{ [key: number]: string }>({});
 
 const showModal = ref(false);
 const selectedProduct = ref<IProduct>({ name: '', price: 0, quantity: 0, categoryIds: [], supplierId: 0 });
-const categoryIdsInput = ref('');
 
 const isLoading = ref(true);
 const showError = ref<string>('');
@@ -32,8 +35,7 @@ const criteria: ProductSearchCriteria = {
 
 const loadProducts = async () => {
   try {
-    const userInfo = authenticationStore.userInfo;
-    const response = await ProductsService.getInstance().getAll(criteria, userInfo!);
+    const response = await ProductsService.getInstance().getAll(criteria);
 
     if (response.errors) {
       showError.value = response.errors.join('\n');
@@ -48,17 +50,43 @@ const loadProducts = async () => {
   }
 };
 
+const loadCategories = async () => {
+  try {
+    const response = await CategoryService.getInstance().getAll();
+    if (response.data) {
+      categoriesMap.value = response.data.reduce((map: any, category: any) => {
+        map[category.id] = category.name;
+        return map;
+      }, {});
+    }
+  } catch (error: any) {
+    console.error('Failed to load categories:', error);
+  }
+};
+
+const loadSuppliers = async () => {
+  try {
+    const response = await SuppliersService.getInstance().getAll();
+    if (response.data) {
+      suppliersMap.value = response.data.reduce((map: any, supplier: any) => {
+        map[supplier.id] = supplier.name;
+        return map;
+      }, {});
+    }
+  } catch (error: any) {
+    console.error('Failed to load suppliers:', error);
+  }
+};
 
 const modalError = ref<string>('');
 
 const saveProduct = async (product: IProduct) => {
   try {
-    selectedProduct.value.categoryIds = categoryIdsInput.value.split(',').map(id => parseInt(id.trim(), 10));
     let response;
     if (selectedProduct.value.id) {
-      response = await ProductsService.getInstance().update(selectedProduct.value.id, selectedProduct.value, authenticationStore.userInfo!);
+      response = await ProductsService.getInstance().update(selectedProduct.value.id, selectedProduct.value);
     } else {
-      response = await ProductsService.getInstance().create(selectedProduct.value, authenticationStore.userInfo!);
+      response = await ProductsService.getInstance().create(selectedProduct.value);
     }
 
     if (response.errors) {
@@ -88,7 +116,6 @@ const sort = (field: string) => {
   loadProducts();
 };
 
-
 const prevPage = () => {
   if (page.value > 1) {
     page.value--;
@@ -106,26 +133,37 @@ const nextPage = () => {
 };
 
 const openCreateModal = () => {
-  selectedProduct.value = { name: '', price: 0, quantity: 0, categoryIds: [], supplierId: 0 };
-  categoryIdsInput.value = '';
+  selectedProduct.value = {
+    name: '',
+    price: 0,
+    quantity: 0,
+    categoryIds: [parseInt(Object.keys(categoriesMap.value)[0])],
+    supplierId: parseInt(Object.keys(suppliersMap.value)[0])
+  };
   showModal.value = true;
 };
 
-const openEditModal = (product: IProduct) => {
-  selectedProduct.value = { ...product };
-  categoryIdsInput.value = product.categoryIds.join(', ');
-  showModal.value = true;
+const openEditModal = async (product: IProduct) => {
+  try {
+    const response = await ProductsService.getInstance().getById(product.id!);
+    if (response.data) {
+      selectedProduct.value = response.data;
+      showModal.value = true;
+    } else if (response.errors) {
+      showError.value = response.errors.join('\n');
+    }
+  } catch (error: any) {
+    showError.value = 'An error occurred while fetching the product details';
+  }
 };
 
 function closeModal() {
   showModal.value = false;
 }
 
-
 const deleteProduct = async (id: number) => {
   try {
-    const userInfo = authenticationStore.userInfo;
-    const response = await ProductsService.getInstance().delete(id, userInfo!);
+    const response = await ProductsService.getInstance().delete(id);
     if (!response.errors) {
       products.value = products.value.filter(product => product.id !== id);
     } else {
@@ -138,9 +176,10 @@ const deleteProduct = async (id: number) => {
 
 onMounted(() => {
   loadProducts();
+  loadCategories();
+  loadSuppliers();
 });
 </script>
-
 
 <template>
   <div>
@@ -148,7 +187,7 @@ onMounted(() => {
     <div v-if="isLoading">Loading...</div>
     <div v-else>
       <div v-if="showError" class="alert alert-danger" style="white-space: pre-line">{{ showError }}</div>
-      <ProductModal v-if="showModal" @close="closeModal" @save="saveProduct">
+      <GeneralModal v-if="showModal" @close="closeModal" @save="saveProduct">
         <template #title>
           <h2>{{ selectedProduct.id ? 'Edit' : 'Add' }} Product</h2>
         </template>
@@ -168,16 +207,20 @@ onMounted(() => {
           </div>
           <div class="form-group">
             <label for="productCategories">Categories</label>
-            <input v-model="categoryIdsInput" type="text" class="form-control" id="productCategories" placeholder="Enter category IDs separated by commas" />
+            <select v-model="selectedProduct.categoryIds[0]" class="form-control" id="productCategories">
+              <option v-for="(name, id) in categoriesMap" :key="id" :value="id">{{ name }}</option>
+            </select>
           </div>
           <div class="form-group">
-            <label for="productSupplier">Supplier ID</label>
-            <input v-model="selectedProduct.supplierId" type="number" class="form-control" id="productSupplier" placeholder="Enter supplier ID" />
+            <label for="productSupplier">Supplier</label>
+            <select v-model="selectedProduct.supplierId" class="form-control" id="productSupplier">
+              <option v-for="(name, id) in suppliersMap" :key="id" :value="id">{{ name }}</option>
+            </select>
           </div>
           <br>
           <button class="btn btn-primary" @click="saveProduct(selectedProduct)">Save</button>
         </template>
-      </ProductModal>
+      </GeneralModal>
       <button @click="openCreateModal" class="btn btn-success mb-2" v-if="hasManagerOrAdminRole">Add Product</button>
 
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -218,8 +261,8 @@ onMounted(() => {
           <td>{{ product.name }}</td>
           <td>{{ product.price }} $</td>
           <td>{{ product.quantity }}</td>
-          <td>{{ product.categoryIds.join(', ') }}</td>
-          <td>{{ product.supplierId }}</td>
+          <td>{{ product.categoryIds.map(id => categoriesMap[id]).join(', ') }}</td>
+          <td>{{ suppliersMap[product.supplierId] }}</td>
           <td v-if="hasManagerOrAdminRole">
             <div class="d-flex gap-2">
               <button @click="openEditModal(product)" class="btn btn-warning btn-sm">Edit</button>
@@ -242,7 +285,6 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 </style>
