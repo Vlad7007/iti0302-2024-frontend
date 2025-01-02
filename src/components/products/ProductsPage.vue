@@ -207,8 +207,8 @@ onMounted(() => {
           </div>
           <div class="form-group">
             <label for="productCategories">Categories</label>
-            <select v-model="selectedProduct.categoryIds[0]" class="form-control" id="productCategories">
-              <option v-for="(name, id) in categoriesMap" :key="id" :value="id">{{ name }}</option>
+            <select v-model="selectedProduct.categoryIds" class="form-control" id="productCategories" multiple>
+              <option v-for="(name, id) in categoriesMap" :key="id" :value="id" type="checkbox">{{ name }}</option>
             </select>
           </div>
           <div class="form-group">

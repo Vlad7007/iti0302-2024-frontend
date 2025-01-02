@@ -19,15 +19,14 @@ async function validateAndRegister() {
       authenticationStore.login(response.data);
       await router.push("/");
     } else if (response.errors && response.errors.length > 0) {
-      validationError.value = response.errors.join('\n');
+      const errorMessage = response.errors;
+      if (errorMessage.includes('<html>')) {
+        validationError.value = 'Failed to connect to the server. Please try again later.';
+      } else {
+        validationError.value = response.errors.join('\n');
+      }
     }
   } catch (error: any) {
-    const errorMessage = error.message;
-    if (errorMessage.includes('<html>')) {
-      validationError.value = 'Failed to connect to the server. Please try again later.';
-    } else {
-      validationError.value = 'An unexpected error occurred. Please try again later.';
-    }
     console.error('An error occurred during registration:', error);
   }
 }
@@ -35,49 +34,52 @@ async function validateAndRegister() {
 
 </script>
 
-<template>
+<<template>
   <div class="row">
     <div class="col-md-5">
       <h2>Register</h2>
       <hr />
       <div v-if="validationError" class="alert alert-danger" style="white-space: pre-line">{{validationError}}</div>
-      <div class="form-floating mb-3">
-        <input
-          v-model="username"
-          id="userName"
-          type="text"
-          class="form-control"
-          autoComplete="firstName"
-          placeholder="User Name"
-        />
-        <label htmlFor="username" class="form-label">Username</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
-          v-model="email"
-          id="email"
-          type="email"
-          class="form-control"
-          autoComplete="email"
-          placeholder="name@example.com"
-        />
-        <label htmlFor="email" class="form-label">Email</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
-          v-model="password"
-          id="password"
-          type="password"
-          class="form-control"
-          autoComplete="password"
-          placeholder="password"
-        />
-        <label htmlFor="password" class="form-label">Password</label>
-      </div>
-      <div>
-        <button @click="validateAndRegister" class="w-100 btn btn-lg btn-primary">Register</button>
-      </div>
+      <form @submit.prevent="validateAndRegister">
+        <div class="form-floating mb-3">
+          <input
+            v-model="username"
+            id="userName"
+            type="text"
+            class="form-control"
+            autoComplete="firstName"
+            placeholder="User Name"
+          />
+          <label htmlFor="username" class="form-label">Username</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            v-model="email"
+            id="email"
+            type="email"
+            class="form-control"
+            autoComplete="email"
+            placeholder="name@example.com"
+          />
+          <label htmlFor="email" class="form-label">Email</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            v-model="password"
+            id="password"
+            type="password"
+            class="form-control"
+            autoComplete="password"
+            placeholder="password"
+          />
+          <label htmlFor="password" class="form-label">Password</label>
+        </div>
+        <div>
+          <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
+
 <style scoped></style>

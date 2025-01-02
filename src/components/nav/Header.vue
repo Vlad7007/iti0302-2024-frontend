@@ -43,7 +43,7 @@ const authenticationStore = useAuthenticationStore()
                 >
               </li>
               <li v-if="authenticationStore.userInfo?.role === 'ROLE_ADMIN'">
-                <RouterLink class="nav-link text-dark" :to="{ name: 'admin' }">Users</RouterLink>
+                <RouterLink class="nav-link btn btn-danger" :to="{ name: 'admin' }">Users</RouterLink>
               </li>
             </template>
           </ul>
