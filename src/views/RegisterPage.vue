@@ -19,15 +19,16 @@ async function validateAndRegister() {
       authenticationStore.login(response.data);
       await router.push("/");
     } else if (response.errors && response.errors.length > 0) {
-      const errorMessage = response.errors;
-      if (errorMessage.includes('<html>')) {
-        validationError.value = 'Failed to connect to the server. Please try again later.';
-      } else {
-        validationError.value = response.errors.join('\n');
-      }
+      validationError.value = response.errors.join('\n');
     }
   } catch (error: any) {
-    console.error('An error occurred during registration:', error);
+    const errorData = error.response?.data || error.message;
+    if (typeof errorData === 'string' && errorData.includes('<html>')) {
+      validationError.value = 'Failed to connect to the server. Please try again later.';
+    } else {
+      validationError.value = 'An error occurred during login. Please try again.';
+    }
+    console.error('An error occurred during login:', error);
   }
 }
 
