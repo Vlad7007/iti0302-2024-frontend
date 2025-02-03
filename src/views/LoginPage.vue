@@ -5,8 +5,8 @@ import AuthenticationService from '@/services/AuthenticationService'
 import { useAuthenticationStore } from '@/stores/AuthenticationStore';
 
 const router = useRouter();
-const username = ref("")
-const pwd = ref("");
+const username = ref("admin")
+const pwd = ref("12345678");
 const validationError = ref("");
 const authenticationStore = useAuthenticationStore();
 const authenticationService = AuthenticationService.getInstance()
